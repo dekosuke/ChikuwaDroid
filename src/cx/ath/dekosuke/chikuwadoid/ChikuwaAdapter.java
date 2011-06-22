@@ -67,7 +67,7 @@ public class ChikuwaAdapter extends ArrayAdapter {
 
 		if (view == null) {
 			// 受け取ったビューがnullなら新しくビューを生成
-			view = inflater.inflate(R.layout.futaba_catalog_row, null);
+			view = inflater.inflate(R.layout.chikuwa_row, null);
 			// 背景画像をセットする
 			// view.setBackgroundResource(R.drawable.back);
 

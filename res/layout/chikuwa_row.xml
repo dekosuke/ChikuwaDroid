@@ -42,16 +42,4 @@
             android:textColor="#800000"
             />  
     </LinearLayout>  
-	        <TextView android:layout_width="20px"  
-	            android:layout_height="fill_parent"
-	            android:id="@+id/nonclickableblank"  
-	            android:textSize="14sp"
-	            android:textColor="#CCCCCC"
-	            android:text=""
-	            />  
-	        <CheckBox android:id="@+id/checkbox"
-			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:checked="false"
-		/>
 </LinearLayout>  
