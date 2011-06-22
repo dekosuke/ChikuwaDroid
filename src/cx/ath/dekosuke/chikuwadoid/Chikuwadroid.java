@@ -1,5 +1,7 @@
 package cx.ath.dekosuke.chikuwadoid;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -67,6 +69,6 @@ public class Chikuwadroid extends Activity implements Runnable {
 		ChikuwaHTMLReader reader = new ChikuwaHTMLReader();
         String url = "http://www.chikuwachan.com/live/";
 		String data = reader.read(url);
-		//ChikuwaParser.parse(data);
+		ArrayList<LiveStream> streams = ChikuwaParser.parse(data);
 	}
 }

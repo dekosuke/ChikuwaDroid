@@ -18,7 +18,8 @@ public class ChikuwaHTMLReader {
 					.loadTextCache(MyCrypt.createDigest(url));
 			network_ok = true;
 		} catch (Exception e) { // ネットワークつながってないときとか
-			FLog.d("failed to get catalog html");
+			FLog.d("message", e);
+			FLog.d("failed to retrieve html");
 			network_ok = false;
 			if (SDCard.cacheExist(MyCrypt.createDigest(url))) {
 				FLog.d("getting html from cache");

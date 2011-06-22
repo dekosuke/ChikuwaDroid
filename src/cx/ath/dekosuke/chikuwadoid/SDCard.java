@@ -143,7 +143,7 @@ public class SDCard {
 	}
 
 	public static String getCacheDir() {
-		String base_dir = getBaseDir() + "/.ftbtcache/";
+		String base_dir = getBaseDir() + "/.ckwcache/";
 		if (cacheDir != null) {
 			// ユーザ指定キャッシュディレクトリ
 			base_dir = cacheDir + "/";
