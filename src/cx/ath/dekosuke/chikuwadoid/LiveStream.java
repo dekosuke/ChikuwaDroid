@@ -15,4 +15,11 @@ public class LiveStream {
 	ArrayList<String> livetags;
 	public String comuname;
 	public int comsize;
+
+	public String toString() {
+		return "url=" + url + " title=" + title + " summary=" + summary
+				+ " rank=" + rank + " min=" + min + " activenum=" + activenum
+				+ " allnum=" + allnum + " comenum=" + comenum + " category="
+				+ category + " comuname=" + comuname + " comsize=" + comsize;
+	}
 }

@@ -75,8 +75,12 @@ public class ChikuwaAdapter extends ArrayAdapter {
 
 		try {
 			// 表示すべきデータの取得
-			final FutabaThreadContent item = (FutabaThreadContent) items
+			final LiveStream item = (LiveStream) items
 					.get(position);
+			FLog.d("hoge");
+			TextView text = (TextView) view.findViewById(R.id.bottomtext);
+			text.setText(item.toString());
+			/*
 			final String threadNum = "" + item.threadNum;
 			TextView text = (TextView) view.findViewById(R.id.bottomtext);
 			CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
@@ -256,57 +260,11 @@ public class ChikuwaAdapter extends ArrayAdapter {
 				} catch (Exception e) {
 					FLog.d("message", e);
 				}
-
 			}
+				*/
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
 		return view;
-	}
-
-	static Object lock_id = new Object();
-	static int LastTaskID = -1;
-
-	// 画像取得用スレッド
-	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
-		private ImageView image;
-		private String tag;
-		private int id;
-
-		public ImageGetTask(ImageView _image) {
-			image = _image;
-			tag = _image.getTag().toString();
-			synchronized (ChikuwaAdapter.lock_id) {
-				ChikuwaAdapter.LastTaskID += 1;
-				id = ChikuwaAdapter.LastTaskID;
-			}
-		}
-
-		@Override
-		protected Bitmap doInBackground(String... urls) {
-			Bitmap bm = null;
-			try {
-				bm = ImageCache.getImage(urls[0]);
-				if (bm == null) { // does not exist on cache
-					ImageCache.setImage(urls[0]);
-					bm = ImageCache.getImage(urls[0]);
-				}
-				bm = ImageResizer.ResizeWideToSquare(bm);
-			} catch (Exception e) {
-				FLog.d(e.toString());
-			}
-			return bm;
-		}
-
-		// メインスレッドで実行する処理
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			// FLog.d(,
-			// "tag="+tag+" image.getTag="+image.getTag().toString() );
-			// Tagが同じものが確認して、同じであれば画像を設定する
-			if (result != null && tag.equals(image.getTag().toString())) {
-				image.setImageBitmap(result);
-			}
-		}
 	}
 }

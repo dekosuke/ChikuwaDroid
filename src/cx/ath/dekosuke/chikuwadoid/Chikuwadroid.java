@@ -2,11 +2,14 @@ package cx.ath.dekosuke.chikuwadoid;
 
 import java.util.ArrayList;
 
+import cx.ath.dekosuke.chikuwadoid.R.id;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.ListView;
 
 public class Chikuwadroid extends Activity implements Runnable {
 	private ProgressDialog waitDialog;
@@ -15,7 +18,7 @@ public class Chikuwadroid extends Activity implements Runnable {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.chikuwa);
         
         setWait();
     }
@@ -70,5 +73,16 @@ public class Chikuwadroid extends Activity implements Runnable {
         String url = "http://www.chikuwachan.com/live/";
 		String data = reader.read(url);
 		ArrayList<LiveStream> streams = ChikuwaParser.parse(data);
+		ListView listView = (ListView) findViewById(id.cataloglistview);
+		ChikuwaAdapter adapter = new ChikuwaAdapter(this, R.layout.chikuwa_row,
+				streams);
+		listView.setAdapter(adapter);
+
+		FLog.d("streams size="+streams.size());
+		
+		waitDialog.dismiss();
+		adapter.notifyDataSetChanged();
+		listView.invalidateViews();
+
 	}
 }
