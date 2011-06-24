@@ -15,6 +15,7 @@ public class LiveStream {
 	ArrayList<String> livetags;
 	public String comuname;
 	public int comsize;
+	public String thumbURL;
 
 	public String toString() {
 		return "url=" + url + " title=" + title + " summary=" + summary

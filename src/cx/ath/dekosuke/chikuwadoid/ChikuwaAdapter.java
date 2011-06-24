@@ -28,8 +28,6 @@ import android.widget.ListView;
 
 import java.io.InputStream;
 import java.net.URL;
-
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -88,6 +86,17 @@ public class ChikuwaAdapter extends ArrayAdapter {
 			iv.setImageBitmap(bm);
 			iv.setVisibility(View.VISIBLE);
 
+			FLog.d("thumburl="+item.thumbURL);
+			// 画像をセット
+			try {
+				if (item.thumbURL != null) {
+					iv.setTag(item.thumbURL);
+					ImageGetTask task = new ImageGetTask(iv);
+					task.execute(item.thumbURL);
+				}
+			} catch (Exception e) {
+				FLog.d("message", e);
+			}
 			
 			/*
 			final String threadNum = "" + item.threadNum;
@@ -276,4 +285,44 @@ public class ChikuwaAdapter extends ArrayAdapter {
 		}
 		return view;
 	}
+	
+	//サムネ画像取得用スレッド
+	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
+		private ImageView image;
+		private String tag;
+		private int id;
+
+		public ImageGetTask(ImageView _image) {
+			image = _image;
+			tag = _image.getTag().toString();
+		}
+
+		@Override
+		protected Bitmap doInBackground(String... urls) {
+			Bitmap bm = null;
+			try {
+				bm = ImageCache.getImage(urls[0]);
+				if (bm == null) { // does not exist on cache
+					ImageCache.setImage(urls[0]);
+					bm = ImageCache.getImage(urls[0]);
+				}
+				bm = ImageResizer.ResizeWideToSquare(bm);
+			} catch (Exception e) {
+				FLog.d(e.toString());
+			}
+			return bm;
+		}
+
+		// メインスレッドで実行する処理
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			// FLog.d(,
+			// "tag="+tag+" image.getTag="+image.getTag().toString() );
+			// Tagが同じものが確認して、同じであれば画像を設定する
+			if (result != null && tag.equals(image.getTag().toString())) {
+				image.setImageBitmap(result);
+			}
+		}
+	}
+
 }
