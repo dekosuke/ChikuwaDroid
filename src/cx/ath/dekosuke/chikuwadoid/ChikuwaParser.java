@@ -47,8 +47,8 @@ public class ChikuwaParser {
 		//番組情報全体
 		Pattern streamPattern = Pattern.compile("<tr class=\"main_tr comm_co([^>]+)\">.+?</tr>",
 				Pattern.DOTALL);
-		Pattern titlePattern = Pattern.compile("<a href=\"http://live.nicovideo.jp/watch/lv([0-9]+)\"[^>]*>" +
-				"([^<]+)</a>",
+		Pattern titlePattern = Pattern.compile("<a [^>]*?href=\"http://live.nicovideo.jp/watch/lv([0-9]+)\"[^>]*>" +
+				"([^<]+?)</a>",
 				Pattern.DOTALL);
 		
 		ArrayList<LiveStream> streams = new ArrayList<LiveStream>();
@@ -56,6 +56,7 @@ public class ChikuwaParser {
 		Matcher mcStream = streamPattern.matcher(html);
 		while (mcStream.find()) { //それぞれのStreamごとに
 			String elem = mcStream.group(0);
+			FLog.d("elem="+elem);
 			LiveStream liveStream = new LiveStream();
 			liveStream.comenum = Integer.parseInt(mcStream.group(1));
 			Matcher titleMc = titlePattern.matcher(elem);

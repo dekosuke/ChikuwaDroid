@@ -79,7 +79,16 @@ public class ChikuwaAdapter extends ArrayAdapter {
 					.get(position);
 			FLog.d("hoge");
 			TextView text = (TextView) view.findViewById(R.id.bottomtext);
-			text.setText(item.toString());
+			ImageView iv = (ImageView) view.findViewById(R.id.image);
+
+			text.setText(item.title);
+			
+			//空画像挿入
+			Bitmap bm = Bitmap.createBitmap(64, 64, Bitmap.Config.ALPHA_8);
+			iv.setImageBitmap(bm);
+			iv.setVisibility(View.VISIBLE);
+
+			
 			/*
 			final String threadNum = "" + item.threadNum;
 			TextView text = (TextView) view.findViewById(R.id.bottomtext);
@@ -89,7 +98,7 @@ public class ChikuwaAdapter extends ArrayAdapter {
 			TextView resNum = (TextView) view.findViewById(R.id.resnum);
 			TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
 			ImageView iv = (ImageView) view.findViewById(R.id.image);
-			Bitmap bm = null;
+			Bitmap bm = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);
 			iv.setImageBitmap(bm);
 			iv.setVisibility(View.VISIBLE);
 			// メニュー用区切りのとき

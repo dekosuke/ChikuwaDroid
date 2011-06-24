@@ -263,7 +263,7 @@ public class SDCard {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
 		String filename = getCacheDir() + name;
 		File file = new File(filename);
-		return FileToString.fileToString(file, "Shift-JIS");
+		return FileToString.fileToString(file, "UTF-8");
 	}
 
 	public static Bitmap loadBitmapCache(String name) {
