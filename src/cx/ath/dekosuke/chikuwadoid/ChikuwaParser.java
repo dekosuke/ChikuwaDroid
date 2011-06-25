@@ -55,17 +55,22 @@ public class ChikuwaParser {
 		// src="http://icon.nimg.jp/community/s/co1113065.jpg?130764"></a></td>
 		Pattern thumbPattern = Pattern.compile(
 				"<img [^>]*src=\"(http://icon.nimg.jp.+?)\"", Pattern.DOTALL);
-		// <img alt="co1131051"
-		// src="http://icon.nimg.jp/community/s/co1131051.jpg?130894">
+		Pattern watchLinkPattern = Pattern.compile(
+				"<a[^>]*href=\"(http://live.nicovideo.jp/watch/(?:lv|co)[0-9]+)\"", Pattern.DOTALL);
+		//<a target="_blank" href="http://com.nicovideo.jp/community/co1011582">じゅん☆じゅん　再出発</a>
+		Pattern commLinkPattern = Pattern.compile(
+				"<a[^>]*href=\"http://com.nicovideo.jp/community/co([0-9]+)\">([^<]+)</a>", Pattern.DOTALL);
 
+		
+		
 		ArrayList<LiveStream> streams = new ArrayList<LiveStream>();
 
 		Matcher mcStream = streamPattern.matcher(html);
 		while (mcStream.find()) { // それぞれのStreamごとに
 			String elem = mcStream.group(0);
-			FLog.d("elem=" + elem);
+			//FLog.d("elem=" + elem);
 			LiveStream liveStream = new LiveStream();
-			liveStream.comenum = Integer.parseInt(mcStream.group(1));
+			//liveStream.commnum = Integer.parseInt(mcStream.group(1));
 			Matcher titleMc = titlePattern.matcher(elem);
 			if (titleMc.find()) {
 				liveStream.title = titleMc.group(2);
@@ -74,6 +79,17 @@ public class ChikuwaParser {
 			if (thumbMc.find()) {
 				liveStream.thumbURL = thumbMc.group(1);
 			}
+			Matcher watchMc = watchLinkPattern.matcher(elem);
+			if (watchMc.find()) {
+				liveStream.watchURL = watchMc.group(1);
+			}
+			Matcher commMc = commLinkPattern.matcher(elem);
+			if (commMc.find()) {
+				liveStream.commnum = Integer.parseInt(commMc.group(1));
+				liveStream.commname = commMc.group(2);
+			}
+			//FLog.d("watchURL="+liveStream.watchURL);
+			
 			if (liveStream.title != null) {
 				streams.add(liveStream);
 			}

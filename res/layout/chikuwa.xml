@@ -12,7 +12,14 @@
 		<LinearLayout android:orientation="horizontal"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:layout_alignParentBottom="true" android:id="@+id/bottom_control_bar">
-
+			<Button android:id="@+id/reload_btn" android:text="リロード"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent" android:onClick="onClickReloadBtn"
+				android:layout_weight="2" />
+			<Button android:text="ソート" android:id="@+id/category_btn"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:onClick="onClickSortBtn" android:layout_weight="2">
+			</Button>
 		</LinearLayout>
 
 		<ListView android:id="@+id/cataloglistview"
