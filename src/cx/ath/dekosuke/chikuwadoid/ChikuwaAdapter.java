@@ -82,10 +82,13 @@ public class ChikuwaAdapter extends ArrayAdapter {
 			TextView topText = (TextView) view.findViewById(R.id.topText);
 			TextView middleText = (TextView) view.findViewById(R.id.middleText);
 			TextView bottomText = (TextView) view.findViewById(R.id.bottomText);
-			TextView bottomText2 = (TextView) view.findViewById(R.id.bottomText2);
+			TextView bottomText2 = (TextView) view
+					.findViewById(R.id.bottomText2);
 			TextView activeText = (TextView) view.findViewById(R.id.activeText);
-			TextView totalPeopleText = (TextView) view.findViewById(R.id.totalPeopleText);
-			TextView totalCommentText = (TextView) view.findViewById(R.id.totalCommentText);
+			TextView totalPeopleText = (TextView) view
+					.findViewById(R.id.totalPeopleText);
+			TextView totalCommentText = (TextView) view
+					.findViewById(R.id.totalCommentText);
 			ImageView iv = (ImageView) view.findViewById(R.id.image);
 
 			// text.setText(item.title);
@@ -101,19 +104,13 @@ public class ChikuwaAdapter extends ArrayAdapter {
 				String comStr = item.commname;
 				bottomText.setText(comStr);
 			}
-			if(item.comsize != null){
-				bottomText2.setText("コミュ参加:"+item.comsize+"人");
-			}
-			if(item.activePeople != null){
-				activeText.setText(Html.fromHtml("アクティブ<br>"+item.activePeople));
-			}
-			if(item.totalPeople != null){
-				totalPeopleText.setText(Html.fromHtml("総人数<br>"+item.totalPeople));
-			}
-			if(item.totalComment != null){
-				totalCommentText.setText(Html.fromHtml("総コメ<br>"+item.totalComment));
-			}
-			
+			bottomText2.setText(Html.fromHtml("コミュ参加:<font color=\"#DD0000\">" + item.comsize + "</font>人"));
+			activeText.setText(Html.fromHtml("アクティブ<br><font color=\"#DD0000\">" + item.activePeople + "</font>"));
+			totalPeopleText
+					.setText(Html.fromHtml("総人数<br><font color=\"#DD0000\">" + item.totalPeople + "</font>"));
+			totalCommentText.setText(Html.fromHtml("総コメ<br><font color=\"#DD0000\">"
+					+ item.totalComment + "</font>"));
+
 			// 空画像挿入
 			Bitmap bm = Bitmap.createBitmap(64, 64, Bitmap.Config.ALPHA_8);
 			iv.setImageBitmap(bm);
@@ -315,7 +312,8 @@ public class ChikuwaAdapter extends ArrayAdapter {
 			// FLog.d(,
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			// Tagが同じものが確認して、同じであれば画像を設定する
-			if (image!=null && result != null && tag.equals(image.getTag().toString())) {
+			if (image != null && result != null
+					&& tag.equals(image.getTag().toString())) {
 				image.setImageBitmap(result);
 			}
 		}

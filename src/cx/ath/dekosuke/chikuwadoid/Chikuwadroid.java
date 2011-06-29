@@ -1,6 +1,8 @@
 package cx.ath.dekosuke.chikuwadoid;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import cx.ath.dekosuke.chikuwadoid.R.id;
 
@@ -71,6 +73,28 @@ public class Chikuwadroid extends Activity implements Runnable {
 		}
 	};
 	
+    private class MyComparator implements Comparator {  
+    	private int sortType = 0;
+    	public MyComparator(int sortType){
+    		this.sortType = sortType;
+    	}
+        public int compare(Object arg0, Object arg1) {  
+        	LiveStream lhs = (LiveStream)arg0;
+        	LiveStream rhs = (LiveStream)arg1;
+        	//残念実装
+            if(sortType==0){
+            	return rhs.activenum-lhs.activenum;
+            }else if(sortType==1){
+            	return rhs.totalPeople-lhs.totalPeople;            	
+            }else if(sortType==2){
+            	return rhs.totalComment-lhs.totalComment;            	
+            }else{
+            	return rhs.comsize-lhs.comsize;            	
+            }
+        }  
+      
+    }  
+	
 	private void loading() {
 		ChikuwaHTMLReader reader = new ChikuwaHTMLReader();
         String url = "http://www.chikuwachan.com/live/";
@@ -82,6 +106,10 @@ public class Chikuwadroid extends Activity implements Runnable {
 		listView.setAdapter(adapter);
 
 		FLog.d("streams size="+streams.size());
+		
+		//ここでソート
+		int sortType = StateMan.getSortParam(this);
+	    Collections.sort(streams, new MyComparator(sortType));
 		
 		waitDialog.dismiss();
 		adapter.notifyDataSetChanged();
@@ -97,9 +125,9 @@ public class Chikuwadroid extends Activity implements Runnable {
 	private int sortType = 0;
 	public void onClickSortBtn(View v) {
 		// Toast.makeText(this, "ソート選択ボタンが押されました", Toast.LENGTH_SHORT).show();
-		final String[] strs = { "カタログ", "新順", "古順", "多順", "少順" };
+		final String[] strs = { "アクティブ人数順", "総人数順", "総コメント数順", "コミュ参加人数順" };
 		AlertDialog.Builder dlg;
-		//final Catalog catalog = this;
+		final Chikuwadroid chikuwadroid = this;
 		dlg = new AlertDialog.Builder(this);
 		dlg.setTitle("ソート方法の選択");
 		// dlg.setMessage("クリップボードにコピーするテキストを選択してください");
@@ -115,8 +143,8 @@ public class Chikuwadroid extends Activity implements Runnable {
 			public void onClick(DialogInterface dialog, int id) {
 				FLog.d("sortType=" + sortType);
 				if (sortType >= 0 && sortType < strs.length) {
-					//StateMan.setSortParam(catalog, sortType);
-					//onClickReloadBtn(null);
+					StateMan.setSortParam(chikuwadroid, sortType);
+					onClickReloadBtn(null);
 				}
 			}
 		});

@@ -79,7 +79,7 @@ public class ChikuwaParser {
 				"<td[^>]*class=\"?comment\"?[^>]*>(.+?)</td>", Pattern.DOTALL);
 		// <td class="attend"><span style="color:#FF0000;">348</span></td>
 		Pattern activePeoplePattern = Pattern.compile(
-				"<td[^>]*class=\"?active\"?[^>]*>(?:.*?)<span[^>]*>(.+?)</span>(?:.*?)</td>", Pattern.DOTALL);
+				"<td[^>]*class=\"?active\"?[^>]*>(?:.*?)<span[^>]*>(?:.*?)([0-9]+)(?:.*?)</span>(?:.*?)</td>", Pattern.DOTALL);
 		//<td colspan="2" class="active" style="background-color:#FFFFFF;">
 
 		Pattern commPeoplePattern = Pattern.compile(
@@ -116,20 +116,20 @@ public class ChikuwaParser {
 			}
 			Matcher activeMc = activePeoplePattern.matcher(elem);
 			if (activeMc.find()) {
-				liveStream.activePeople = activeMc.group(1);
+				liveStream.activePeople = Integer.parseInt(rmtag(activeMc.group(1)));
 			}
 
 			Matcher peopleMc = totalPeoplePattern.matcher(elem);
 			if (peopleMc.find()) {
-				liveStream.totalPeople = peopleMc.group(1);
+				liveStream.totalPeople = Integer.parseInt(rmtag(peopleMc.group(1)));
 			}
 			Matcher commentMc = totalCommentPattern.matcher(elem);
 			if (commentMc.find()) {
-				liveStream.totalComment = commentMc.group(1);
+				liveStream.totalComment = Integer.parseInt(rmtag(commentMc.group(1)));
 			}
 			Matcher commPeopleMc = commPeoplePattern.matcher(elem);
 			if (commPeopleMc.find()) {
-				liveStream.comsize = commPeopleMc.group(1);
+				liveStream.comsize = Integer.parseInt(rmtag(commPeopleMc.group(1)));
 			}
 			
 			// FLog.d("watchURL="+liveStream.watchURL);
@@ -141,4 +141,13 @@ public class ChikuwaParser {
 
 		return streams;
 	}
+	
+	private static Pattern tagPattern = Pattern
+	.compile("<.+?>", Pattern.DOTALL);
+
+	private static String rmtag(String text) {
+		text = tagPattern.matcher(text).replaceAll(""); // タグ除去
+		return text;
+	}
+
 }
