@@ -77,13 +77,43 @@ public class ChikuwaAdapter extends ArrayAdapter {
 		try {
 			// 表示すべきデータの取得
 			final LiveStream item = (LiveStream) items.get(position);
-			TextView text = (TextView) view.findViewById(R.id.bottomtext);
-			TextView topText = (TextView) view.findViewById(R.id.bbsname);
+			TextView numberText = (TextView) view.findViewById(R.id.numberText);
+			// TextView text = (TextView) view.findViewById(R.id.bottomtext);
+			TextView topText = (TextView) view.findViewById(R.id.topText);
+			TextView middleText = (TextView) view.findViewById(R.id.middleText);
+			TextView bottomText = (TextView) view.findViewById(R.id.bottomText);
+			TextView bottomText2 = (TextView) view.findViewById(R.id.bottomText2);
+			TextView activeText = (TextView) view.findViewById(R.id.activeText);
+			TextView totalPeopleText = (TextView) view.findViewById(R.id.totalPeopleText);
+			TextView totalCommentText = (TextView) view.findViewById(R.id.totalCommentText);
 			ImageView iv = (ImageView) view.findViewById(R.id.image);
 
-			text.setText(item.title);
-			topText.setText("co"+item.commnum+":"+item.commname);
-
+			// text.setText(item.title);
+			// topText.setText("co"+item.commnum+":"+item.commname);
+			numberText.setText("" + (position + 1));
+			if (item.title != null) {
+				topText.setText(item.title);
+			}
+			if (item.summary != null) {
+				middleText.setText(item.summary);
+			}
+			if (item.summary != null) {
+				String comStr = item.commname;
+				bottomText.setText(comStr);
+			}
+			if(item.comsize != null){
+				bottomText2.setText("コミュ参加:"+item.comsize+"人");
+			}
+			if(item.activePeople != null){
+				activeText.setText(Html.fromHtml("アクティブ<br>"+item.activePeople));
+			}
+			if(item.totalPeople != null){
+				totalPeopleText.setText(Html.fromHtml("総人数<br>"+item.totalPeople));
+			}
+			if(item.totalComment != null){
+				totalCommentText.setText(Html.fromHtml("総コメ<br>"+item.totalComment));
+			}
+			
 			// 空画像挿入
 			Bitmap bm = Bitmap.createBitmap(64, 64, Bitmap.Config.ALPHA_8);
 			iv.setImageBitmap(bm);
@@ -285,7 +315,7 @@ public class ChikuwaAdapter extends ArrayAdapter {
 			// FLog.d(,
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			// Tagが同じものが確認して、同じであれば画像を設定する
-			if (result != null && tag.equals(image.getTag().toString())) {
+			if (image!=null && result != null && tag.equals(image.getTag().toString())) {
 				image.setImageBitmap(result);
 			}
 		}

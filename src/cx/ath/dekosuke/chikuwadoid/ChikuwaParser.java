@@ -46,7 +46,9 @@ public class ChikuwaParser {
 	static ArrayList<LiveStream> parse(String html) {
 		// 番組情報全体
 		Pattern streamPattern = Pattern
-				.compile("<tr class=\"main_tr comm_co([^>]+)\">.+?</tr>",
+				.compile(
+						"<tr class=\"main_tr comm_co([^>]+)\">.+?</tr>" +
+						"<tr class=\"main_tr comm_co(?:[^>]+)\">.+?</tr>",
 						Pattern.DOTALL);
 		Pattern titlePattern = Pattern.compile(
 				"<a [^>]*?href=\"http://live.nicovideo.jp/watch/lv([0-9]+)\"[^>]*>"
@@ -55,22 +57,42 @@ public class ChikuwaParser {
 		// src="http://icon.nimg.jp/community/s/co1113065.jpg?130764"></a></td>
 		Pattern thumbPattern = Pattern.compile(
 				"<img [^>]*src=\"(http://icon.nimg.jp.+?)\"", Pattern.DOTALL);
-		Pattern watchLinkPattern = Pattern.compile(
-				"<a[^>]*href=\"(http://live.nicovideo.jp/watch/(?:lv|co)[0-9]+)\"", Pattern.DOTALL);
-		//<a target="_blank" href="http://com.nicovideo.jp/community/co1011582">じゅん☆じゅん　再出発</a>
-		Pattern commLinkPattern = Pattern.compile(
-				"<a[^>]*href=\"http://com.nicovideo.jp/community/co([0-9]+)\">([^<]+)</a>", Pattern.DOTALL);
+		Pattern watchLinkPattern = Pattern
+				.compile(
+						"<a[^>]*href=\"(http://live.nicovideo.jp/watch/(?:lv|co)[0-9]+)\"",
+						Pattern.DOTALL);
+		// <a target="_blank"
+		// href="http://com.nicovideo.jp/community/co1011582">じゅん☆じゅん　再出発</a>
+		Pattern commLinkPattern = Pattern
+				.compile(
+						"<a[^>]*href=\"http://com.nicovideo.jp/community/co([0-9]+)\">([^<]+)</a>",
+						Pattern.DOTALL);
 
-		
-		
+		// <span class="date">18<span style="font-size:7pt;">分</span>
+		// <div class="content">大分県生まれの大阪育ちで、金融とＩＴ企業を経営しております。</div>
+		Pattern mainTextPattern = Pattern.compile(
+				"<div[^>]*class=\"?content\"?>([^<]+)</div>", Pattern.DOTALL);
+
+		Pattern totalPeoplePattern = Pattern.compile(
+				"<td[^>]*class=\"?attend\"?[^>]*>(.+?)</td>", Pattern.DOTALL);
+		Pattern totalCommentPattern = Pattern.compile(
+				"<td[^>]*class=\"?comment\"?[^>]*>(.+?)</td>", Pattern.DOTALL);
+		// <td class="attend"><span style="color:#FF0000;">348</span></td>
+		Pattern activePeoplePattern = Pattern.compile(
+				"<td[^>]*class=\"?active\"?[^>]*>(?:.*?)<span[^>]*>(.+?)</span>(?:.*?)</td>", Pattern.DOTALL);
+		//<td colspan="2" class="active" style="background-color:#FFFFFF;">
+
+		Pattern commPeoplePattern = Pattern.compile(
+				"<span[^>]*class=\"?community2\"?[^>]*>(.+?)</span>", Pattern.DOTALL);
+
 		ArrayList<LiveStream> streams = new ArrayList<LiveStream>();
 
 		Matcher mcStream = streamPattern.matcher(html);
 		while (mcStream.find()) { // それぞれのStreamごとに
 			String elem = mcStream.group(0);
-			//FLog.d("elem=" + elem);
+			// FLog.d("elem=" + elem);
 			LiveStream liveStream = new LiveStream();
-			//liveStream.commnum = Integer.parseInt(mcStream.group(1));
+			// liveStream.commnum = Integer.parseInt(mcStream.group(1));
 			Matcher titleMc = titlePattern.matcher(elem);
 			if (titleMc.find()) {
 				liveStream.title = titleMc.group(2);
@@ -88,8 +110,30 @@ public class ChikuwaParser {
 				liveStream.commnum = Integer.parseInt(commMc.group(1));
 				liveStream.commname = commMc.group(2);
 			}
-			//FLog.d("watchURL="+liveStream.watchURL);
+			Matcher mainMc = mainTextPattern.matcher(elem);
+			if (mainMc.find()) {
+				liveStream.summary = mainMc.group(1);
+			}
+			Matcher activeMc = activePeoplePattern.matcher(elem);
+			if (activeMc.find()) {
+				liveStream.activePeople = activeMc.group(1);
+			}
+
+			Matcher peopleMc = totalPeoplePattern.matcher(elem);
+			if (peopleMc.find()) {
+				liveStream.totalPeople = peopleMc.group(1);
+			}
+			Matcher commentMc = totalCommentPattern.matcher(elem);
+			if (commentMc.find()) {
+				liveStream.totalComment = commentMc.group(1);
+			}
+			Matcher commPeopleMc = commPeoplePattern.matcher(elem);
+			if (commPeopleMc.find()) {
+				liveStream.comsize = commPeopleMc.group(1);
+			}
 			
+			// FLog.d("watchURL="+liveStream.watchURL);
+
 			if (liveStream.title != null) {
 				streams.add(liveStream);
 			}

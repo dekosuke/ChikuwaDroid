@@ -14,7 +14,7 @@ import java.net.URL;
 public class ImageCache {
 
 	public static Bitmap getImage(String url) {
-		String urlHash = FutabaCrypt.createDigest(url);
+		String urlHash = MyCrypt.createDigest(url);
 		// 本当はキーを画像名ではなくスレッド名含むURLにすべき
 		try {
 			if (SDCard.cacheExist(urlHash)) {
@@ -35,7 +35,7 @@ public class ImageCache {
 	}
 
 	public static boolean setImage(String url) {
-		String urlHash = FutabaCrypt.createDigest(url);
+		String urlHash = MyCrypt.createDigest(url);
 		try {
 			SDCard.saveFromURL(urlHash, new URL(url), true);
 			return true;
@@ -46,7 +46,7 @@ public class ImageCache {
 	}
 
 	public static boolean setImageFromBitmap(String url, Bitmap bmp) {
-		String urlHash = FutabaCrypt.createDigest(url);
+		String urlHash = MyCrypt.createDigest(url);
 		byte[] bytes = bmp2data(bmp, Bitmap.CompressFormat.PNG, 100);
 		try {
 			// SDCard.saveFromURL(urlHash, new URL(url), true);
@@ -59,7 +59,7 @@ public class ImageCache {
 	}
 
 	public static File saveImage(String url) {
-		String urlHash = FutabaCrypt.createDigest(url);
+		String urlHash = MyCrypt.createDigest(url);
 		File file = new File(url);
 		if (SDCard.cacheExist(urlHash)) {
 			try {
@@ -78,7 +78,7 @@ public class ImageCache {
 	}
 	
 	public static File saveImageToThread(String url, String threadName) {
-		String urlHash = FutabaCrypt.createDigest(url);
+		String urlHash = MyCrypt.createDigest(url);
 		File file = new File(url);
 		if (SDCard.cacheExist(urlHash)) {
 			try {

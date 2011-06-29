@@ -14,9 +14,12 @@ public class LiveStream {
 	public String category;
 	ArrayList<String> livetags;
 	public String commname;
-	public int comsize;
+	public String comsize;
 	public String thumbURL;
 	public String watchURL;
+	public String totalPeople;
+	public String activePeople;
+	public String totalComment;
 
 	public String toString() {
 		return "url=" + url + " title=" + title;
