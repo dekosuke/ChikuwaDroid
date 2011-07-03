@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class FLog {
 	static final String appname = "chikuwa";
-	static final boolean use_log=true;
+	static final boolean use_log=false;
 	static public int d(String msg){
 		if(use_log){
 			return Log.d(appname, msg);
