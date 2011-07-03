@@ -58,44 +58,6 @@ public class ImageCache {
 		return false;
 	}
 
-	public static File saveImage(String url) {
-		String urlHash = MyCrypt.createDigest(url);
-		File file = new File(url);
-		if (SDCard.cacheExist(urlHash)) {
-			try {
-				return SDCard.copyCacheToFile(urlHash, file.getName());
-			} catch (Exception e) {
-				FLog.d("message", e);
-			}
-		} else {
-			// キャッシュがない(通常あまりないはずだが・・)
-			// 再読み込みしてください、みたいな例外を投げましょう
-			/*
-			 * setImage(url); //再帰 saveImage(url);
-			 */
-		}
-		return null;
-	}
-	
-	public static File saveImageToThread(String url, String threadName) {
-		String urlHash = MyCrypt.createDigest(url);
-		File file = new File(url);
-		if (SDCard.cacheExist(urlHash)) {
-			try {
-				return SDCard.copyCacheToThreadFile(urlHash, file.getName(), threadName);
-			} catch (Exception e) {
-				FLog.d("message", e);
-			}
-		} else {
-			// キャッシュがない(通常あまりないはずだが・・)
-			// 再読み込みしてください、みたいな例外を投げましょう
-			/*
-			 * setImage(url); //再帰 saveImage(url);
-			 */
-		}
-		return null;
-	}
-
 	public static void GC() {
 		// currently do nothing
 	}

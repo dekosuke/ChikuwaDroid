@@ -44,29 +44,11 @@ public class SDCard {
 				Environment.MEDIA_MOUNTED);
 	}
 
-	public static boolean setAntiCacheDir(Context context) {
-		try {
-			SharedPreferences preferences = PreferenceManager
-					.getDefaultSharedPreferences(context);
-			Boolean innerCache = preferences.getBoolean("innerCache", false);
-			if (!innerCache) {
-				cacheDir = context.getFilesDir().getPath();
-			} else { // 外部メモリ
-				cacheDir = null;
-			}
-			FLog.d("cacheDir=" + cacheDir);
-		} catch (Exception e) {
-			FLog.d("message", e);
-			return false;
-		}
-		return true;
-	}
-
 	public static boolean setCacheDir(Context context) {
 		try {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(context);
-			Boolean innerCache = preferences.getBoolean("innerCache", false);
+			Boolean innerCache = true; //キャッシュ内部に限定
 			if (innerCache) {
 				cacheDir = context.getFilesDir().getPath();
 			} else { // 外部メモリ
@@ -78,40 +60,6 @@ public class SDCard {
 			return false;
 		}
 		return true;
-	}
-
-	// キャッシュ内部・外部切り替え時にお気に入りをコピー
-	public static void copyCacheSetting(Context context) {
-		setAntiCacheDir(context);
-		File fbin = new File(getCacheDir() + "bin/");
-		fbin.mkdir();
-		String newFile = getCacheDir() + "bin/favorites";
-		setCacheDir(context);
-		fbin = new File(getCacheDir() + "bin/");
-		fbin.mkdir();
-		String oldFile = getCacheDir() + "bin/favorites";
-
-		FLog.d("copy file:" + oldFile + " -> " + newFile);
-
-		// ファイルコピーのフェーズ
-		InputStream input = null;
-		OutputStream output = null;
-		File dstFile = new File(newFile);
-		try {
-			input = new FileInputStream(new File(oldFile));
-			output = new FileOutputStream(dstFile);
-
-			int DEFAULT_BUFFER_SIZE = 1024 * 4;
-			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-			int n = 0;
-			while (-1 != (n = input.read(buffer))) {
-				output.write(buffer, 0, n);
-			}
-			input.close();
-			output.close();
-		} catch (Exception e) {
-			FLog.d("message", e);
-		}
 	}
 
 	public static boolean setSaveDir(Context context) {
@@ -159,33 +107,6 @@ public class SDCard {
 		return cacheDir;
 	}
 
-	public static String getSaveDir() {
-		String base_dir = getBaseDir() + "/ふたばと/";
-		if (saveDir != null) {
-			// ユーザ指定保存ディレクトリ
-			base_dir = saveDir + "/";
-		}
-		FLog.d("base_dir=" + base_dir);
-		String saveDir = base_dir;
-		File file = new File(saveDir);
-		file.mkdir(); // ディレクトリないときにつくる
-		if (!isUsableDirectory(file)) {
-			// ディレクトリが存在しないか書き込み権限がない
-			return null;
-		}
-		return saveDir;
-	}
-
-	// 保存ディレクトリ内にサブディレクトリを生成する
-	public static String getThreadDir(String threadName) {
-		String saveDir = getSaveDir();
-		String threadDir = saveDir + threadName + "/";
-		File file = new File(threadDir);
-		file.mkdir(); // ディレクトリないときにつくる
-		return threadDir;
-
-	}
-
 	public static String getSeriarizedDir() {
 		String cacheDir = getCacheDir();
 		String seriarizedDir = cacheDir + "bin/";
@@ -197,11 +118,7 @@ public class SDCard {
 
 	public static void saveBin(String name, byte[] bytes, boolean isCache) {
 		String filename;
-		if (!isCache) {
-			filename = getSaveDir() + name;
-		} else {
-			filename = getCacheDir() + name;
-		}
+		filename = getCacheDir() + name;
 		FLog.d("length=" + bytes.length);
 		File file = new File(filename);
 		FLog.d(filename);
@@ -222,11 +139,7 @@ public class SDCard {
 			throws IOException {
 		try {
 			String filename;
-			if (!isCache) {
-				filename = getSaveDir() + name;
-			} else {
-				filename = getCacheDir() + name;
-			}
+			filename = getCacheDir() + name;
 
 			// InputStream is = url.openStream();
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -282,57 +195,6 @@ public class SDCard {
 		return file.exists();
 	}
 
-	public static File copyCacheToFile(String urlhash, String url)
-			throws IOException {
-		String srcfilename = getCacheDir() + urlhash;
-		String dstfilename = getSaveDir() + url;
-		// ファイルコピーのフェーズ
-		InputStream input = null;
-		OutputStream output = null;
-		File dstFile = new File(dstfilename);
-		input = new FileInputStream(new File(srcfilename));
-		output = new FileOutputStream(dstFile);
-
-		int DEFAULT_BUFFER_SIZE = 1024 * 4;
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-		int n = 0;
-		while (-1 != (n = input.read(buffer))) {
-			output.write(buffer, 0, n);
-		}
-		input.close();
-		output.close();
-		return dstFile;
-	}
-
-	public static boolean savedImageToThreadExist(String fileName,
-			String threadName) {
-		String dstfilename = getThreadDir(threadName) + fileName;
-		File file = new File(dstfilename);
-		return file.exists();
-	}
-
-	public static File copyCacheToThreadFile(String urlhash, String url,
-			String threadName) throws IOException {
-		String srcfilename = getCacheDir() + urlhash;
-		String dstfilename = getThreadDir(threadName) + url;
-		// ファイルコピーのフェーズ
-		InputStream input = null;
-		OutputStream output = null;
-		File dstFile = new File(dstfilename);
-		input = new FileInputStream(new File(srcfilename));
-		output = new FileOutputStream(dstFile);
-
-		int DEFAULT_BUFFER_SIZE = 1024 * 4;
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-		int n = 0;
-		while (-1 != (n = input.read(buffer))) {
-			output.write(buffer, 0, n);
-		}
-		input.close();
-		output.close();
-		return dstFile;
-	}
-
 	// ファイル古いものが先にくるようにソート
 	// HTMLファイルは消えにくいように時間を一日伸ばしている
 	static Comparator comparator = new Comparator() {
@@ -341,10 +203,7 @@ public class SDCard {
 			File f1 = (File) o1;
 			File f2 = (File) o2;
 			long f1_lastmodified = f1.lastModified();
-			// Log.d("ftbt",
-			// f1.toString()+" is "+FutabaCrypt.isHTMLName(f1.toString()));
 			if (MyCrypt.isHTMLName(f1.toString())) {
-				// Log.d("ftbt", f1.toString()+" is HTML");
 				f1_lastmodified += additional_days;
 			}
 			long f2_lastmodified = f2.lastModified();
